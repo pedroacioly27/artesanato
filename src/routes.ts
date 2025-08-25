@@ -10,7 +10,12 @@ routes.post("/login", new UserController().login);
 
 routes.use(authMiddleware);
 routes.get("/profile", new UserController().getProfile);
-routes.get("/extract", new UserController().extract);
+routes.get("/transaction/extract", new TransactionController().extract);
 routes.post("/transaction", new TransactionController().createTransaction);
+routes.patch("/transaction/:id", new TransactionController().updateTransaction);
+routes.delete(
+  "/transaction/:id",
+  new TransactionController().deleteTransaction
+);
 
 export default routes;
