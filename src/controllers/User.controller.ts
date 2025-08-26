@@ -3,7 +3,6 @@ import { userRepository } from "../repositories/userRepository";
 import { BadRequestError, NotFoundError } from "../helpers/api-error";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { transactionRepository } from "../repositories/transactionRepository";
 
 export class UserController {
   async create(req: Request, res: Response) {
