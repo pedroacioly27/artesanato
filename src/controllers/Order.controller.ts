@@ -45,6 +45,14 @@ export class OrderController {
     res.status(201).json("Encomenda cadastrada com sucesso!");
   }
 
+  async getOrders(req: Request, res: Response) {
+    const user = req.user;
+
+    const orders = await orderRepository.find({ where: { user } });
+
+    res.status(200).json(orders);
+  }
+
   async updateOrder(req: Request, res: Response) {
     const { id } = req.params;
     const { description, date, received, total } = req.body;
@@ -71,5 +79,20 @@ export class OrderController {
     await orderRepository.save(order);
 
     return res.status(200).json(order);
+  }
+
+  async deleteOrder(req: Request, res: Response) {
+    const { id } = req.params;
+    const user = req.user;
+
+    const order = await orderRepository.findOne({
+      where: { id: Number(id), user },
+    });
+
+    if (!order) {
+      throw new NotFoundError("Encomenda não encontrada!");
+    }
+    await orderRepository.delete(order);
+    return res.status(200).json("Encomenda deletada com sucesso!");
   }
 }

@@ -65,4 +65,39 @@ export class UserController {
   async getProfile(req: Request, res: Response) {
     return res.status(200).json(req.user);
   }
+
+  async updateProfile(req: Request, res: Response) {
+    const { name, email, password } = req.body;
+    const userID = req.user.id;
+
+    const user = await userRepository.findOne({
+      where: {
+        id: userID,
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestError("Usuário não encontrado!");
+    }
+
+    if (name) user.name = name;
+
+    if (email) {
+      const emailExists = await userRepository.findOne({ where: { email } });
+      if (emailExists && emailExists.id !== user.id) {
+        throw new BadRequestError("Email já cadastrado!");
+      }
+      user.email = email;
+    }
+    if (password) {
+      const hashPassword = await bcrypt.hash(password, 10);
+      user.password = hashPassword;
+    }
+
+    await userRepository.save(user);
+
+    const { password: _, ...userUpdated } = user;
+
+    return res.status(200).json(userUpdated);
+  }
 }
